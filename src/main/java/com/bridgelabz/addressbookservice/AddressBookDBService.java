@@ -6,6 +6,7 @@ import java.util.List;
 
 public class AddressBookDBService {
     private static AddressBookDBService addressBookDBService;
+    private static PreparedStatement contactStatement;
 
     private AddressBookDBService(){}
 
@@ -66,4 +67,42 @@ public class AddressBookDBService {
         return connection;
     }
 
+    public static int updateContactData(String firstName, String address) {
+        String sql = String.format("update contact set address='%s' where first_name='%s';", address, firstName);
+        try (Connection connection = getConnection()) {
+            Statement statement = connection.createStatement();
+            return statement.executeUpdate(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public static List<Contact> getContactFromDB(String name) throws SQLException {
+        List<Contact> contactList = null;
+        if (contactStatement == null)
+            prepareStatementForEmployeeData();
+        try {
+            contactStatement.setString(1, name);
+            ResultSet resultSet = contactStatement.executeQuery();
+            contactList = getContact(resultSet);
+            getConnection().close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return contactList;
+
+
+    }
+
+    private static void prepareStatementForEmployeeData() throws SQLException {
+        try {
+            Connection connection = getConnection();
+            String sql = "SELECT * FROM contact where first_name= ?";
+            contactStatement = connection.prepareStatement(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

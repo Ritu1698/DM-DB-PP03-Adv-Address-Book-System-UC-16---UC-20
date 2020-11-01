@@ -9,12 +9,32 @@ public class AddressBookService {
     private  AddressBookDBService addressBookDBService;
     public AddressBookService(){
         addressBookDBService = AddressBookDBService.getInstance();
-        this.contacts=new ArrayList<>();
+        contacts=new ArrayList<>();
     }
 
-    public List<Contact> readContactData() throws SQLException {
-        this.contacts= AddressBookDBService.readData();
-        return this.contacts;
+    public static List<Contact> readContactData() throws SQLException {
+        contacts= AddressBookDBService.readData();
+        return contacts;
+
+    }
+
+    public void updateContactsAddress(String firstName, String address){
+        int result=AddressBookDBService.updateContactData(firstName,address);
+        if(result==0) return;
+        Contact contact=this.getContactData(firstName);
+        if(contact!=null) contact.address= address;
+    }
+
+    public Contact getContactData(String name) {
+        return this.contacts.stream()
+                .filter(employeePayrollData -> employeePayrollData.firstName.equals(name))
+                .findFirst()
+                .orElse(null);
+
+    }
+    public boolean checkIfDataBaseIsInSync(String name) throws SQLException {
+        List<Contact> employeePayrollDataList= AddressBookDBService.getContactFromDB(name);
+        return employeePayrollDataList.get(0).equals(getContactData(name));
 
     }
 }
