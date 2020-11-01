@@ -13,8 +13,9 @@ public class Contact {
     public String zip;
     public String phoneNumber;
     public String email;
+    public LocalDate registeredDate;
 
-    public Contact(int contactID, String firstName, String lastName, String address, String city, String state, String zip, String phoneNumber, String email) {
+    public Contact(int contactID, String firstName, String lastName, String address, String city, String state, String zip, String phoneNumber, String email, LocalDate registeredDate) {
         this.contactID = contactID;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -24,6 +25,7 @@ public class Contact {
         this.zip = zip;
         this.phoneNumber = phoneNumber;
         this.email = email;
+        this.registeredDate = registeredDate;
     }
 
     @Override
@@ -39,6 +41,7 @@ public class Contact {
                 Objects.equals(state, contact.state) &&
                 Objects.equals(zip, contact.zip) &&
                 Objects.equals(phoneNumber, contact.phoneNumber) &&
-                Objects.equals(email, contact.email);
+                Objects.equals(email, contact.email) &&
+                Objects.equals(registeredDate, contact.registeredDate);
     }
 }

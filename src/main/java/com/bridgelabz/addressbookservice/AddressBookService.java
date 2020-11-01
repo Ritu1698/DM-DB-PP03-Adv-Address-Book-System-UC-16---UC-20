@@ -57,4 +57,8 @@ public class AddressBookService {
         return contacts;
 
     }
+
+    public static void addContactToAddressBook(String firstName, String lastName, String address, String city, String state, String zip, String number, String email, LocalDate start) throws SQLException {
+        contacts.add(AddressBookDBService.addContactToDB(firstName, lastName, address, city, state, zip, number, email, start));
+    }
 }
