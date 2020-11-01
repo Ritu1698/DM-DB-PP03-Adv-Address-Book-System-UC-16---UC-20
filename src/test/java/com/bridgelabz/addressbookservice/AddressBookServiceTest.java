@@ -28,9 +28,9 @@ public class AddressBookServiceTest {
     @Test
     public void givenDateRange_whenRetrieved_shouldMatchSize() throws SQLException {
         AddressBookService addressBookService = new AddressBookService();
-        LocalDate startDate=LocalDate.of(2018,1,1);
+        LocalDate startDate = LocalDate.of(2018, 1, 1);
         LocalDate endDate = LocalDate.now();
-        List<Contact> contactList = AddressBookService.readContactsBetweenDateRange(startDate,endDate);
+        List<Contact> contactList = AddressBookService.readContactsBetweenDateRange(startDate, endDate);
         Assert.assertEquals(4, contactList.size());
 
     }
@@ -48,6 +48,16 @@ public class AddressBookServiceTest {
         AddressBookService addressBookService = new AddressBookService();
         List<Contact> contactList = AddressBookService.readContactsByState("West Bengal");
         Assert.assertEquals(2, contactList.size());
+
+    }
+
+    @Test
+    public void givenNewEmployeeWhenAddedShouldSyncWithDB() throws SQLException {
+        AddressBookService addressBookService = new AddressBookService();
+        addressBookService.readContactData();
+        addressBookService.addContactToAddressBook("Priyanka", "Kalena", "Orchid", "Mumbai", "Maharastra", "400096", "998855975", "pk@gmail.com", LocalDate.now());
+        boolean result = addressBookService.checkIfDataBaseIsInSync("Priyanka");
+        Assert.assertTrue(result);
 
     }
 
