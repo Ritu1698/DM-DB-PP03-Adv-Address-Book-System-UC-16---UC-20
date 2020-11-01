@@ -111,4 +111,16 @@ public class AddressBookDBService {
         String sql=String.format("select * from contact where registered_date between '%s' and '%s';", Date.valueOf(startDate), Date.valueOf(endDate));
         return getContactList(sql);
     }
+
+    public static List<Contact> readContactsByCity(String city) {
+        String sql=String.format("select * from contact where city='%s'",city);
+        return getContactList(sql);
+
+    }
+    public static List<Contact> readContactsByState(String city) {
+        String sql=String.format("select * from contact where state='%s'",city);
+        return getContactList(sql);
+
+    }
+
 }
