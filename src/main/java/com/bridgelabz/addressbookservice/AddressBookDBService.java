@@ -1,6 +1,7 @@
 package com.bridgelabz.addressbookservice;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -104,5 +105,10 @@ public class AddressBookDBService {
             e.printStackTrace();
         }
 
+    }
+
+    public static List<Contact> readDataGivenDateRange(LocalDate startDate, LocalDate endDate) {
+        String sql=String.format("select * from contact where registered_date between '%s' and '%s';", Date.valueOf(startDate), Date.valueOf(endDate));
+        return getContactList(sql);
     }
 }

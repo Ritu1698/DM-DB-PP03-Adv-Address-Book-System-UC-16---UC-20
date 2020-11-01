@@ -1,6 +1,7 @@
 package com.bridgelabz.addressbookservice;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +17,11 @@ public class AddressBookService {
         contacts= AddressBookDBService.readData();
         return contacts;
 
+    }
+
+    public static List<Contact> readContactsBetweenDateRange(LocalDate startDate, LocalDate endDate) {
+        contacts= AddressBookDBService.readDataGivenDateRange(startDate,endDate);
+        return contacts;
     }
 
     public void updateContactsAddress(String firstName, String address){
