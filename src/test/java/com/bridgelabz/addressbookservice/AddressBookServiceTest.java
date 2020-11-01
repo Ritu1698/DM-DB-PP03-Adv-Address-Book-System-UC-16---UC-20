@@ -35,4 +35,20 @@ public class AddressBookServiceTest {
 
     }
 
+    @Test
+    public void givenCity_whenRetrieved_shouldMatchSize() throws SQLException {
+        AddressBookService addressBookService = new AddressBookService();
+        List<Contact> contactList = AddressBookService.readContactsByCity("Mumbai");
+        Assert.assertEquals(2, contactList.size());
+
+    }
+
+    @Test
+    public void givenState_whenRetrieved_shouldMatchSize() throws SQLException {
+        AddressBookService addressBookService = new AddressBookService();
+        List<Contact> contactList = AddressBookService.readContactsByState("West Bengal");
+        Assert.assertEquals(2, contactList.size());
+
+    }
+
 }
