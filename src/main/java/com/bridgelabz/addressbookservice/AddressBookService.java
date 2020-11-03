@@ -3,7 +3,9 @@ package com.bridgelabz.addressbookservice;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddressBookService {
     public static List<Contact> contacts;
@@ -58,7 +60,40 @@ public class AddressBookService {
 
     }
 
-    public static void addContactToAddressBook(String firstName, String lastName, String address, String city, String state, String zip, String number, String email, LocalDate start) throws SQLException {
+    public static void addContactToAddressBook(String firstName, String lastName, String address, String city, String state, String zip, String number, String email, LocalDate start) {
         contacts.add(AddressBookDBService.addContactToDB(firstName, lastName, address, city, state, zip, number, email, start));
     }
+
+    public void addMultiContactToAddressBook(List<Contact> contactList) {
+        contactList.forEach(contactData -> {
+            System.out.println("Employee Being Added: " + contactData.firstName);
+            addContactToAddressBook(contactData.firstName, contactData.lastName, contactData.address, contactData.city, contactData.state, contactData.zip, contactData.phoneNumber, contactData.email, contactData.registeredDate);
+            System.out.println("Employee Added: " + contactData.firstName);
+        });
+        System.out.println("AFTER PROCESS OPERATION-------------------------\n" + contacts);
+    }
+
+    public void addMultiContactToAddressBookWithThreads(List<Contact> contactList) {
+        Map<Integer, Boolean> employeeAdditionStatus = new HashMap<Integer, Boolean>();
+        contactList.forEach(contactData -> {
+            Runnable task = () -> {
+                employeeAdditionStatus.put(contactData.hashCode(), false);
+                System.out.println("Contact Being Added Via Thread: " + Thread.currentThread().getName());
+                addContactToAddressBook(contactData.firstName, contactData.lastName, contactData.address, contactData.city, contactData.state, contactData.zip, contactData.phoneNumber, contactData.email, contactData.registeredDate);
+                employeeAdditionStatus.put(contactData.hashCode(), true);
+                System.out.println("Employee Added Via Thread: " + Thread.currentThread().getName());
+            };
+            Thread thread = new Thread(task, contactData.firstName);
+            thread.start();
+        });
+        while (employeeAdditionStatus.containsValue(false)) {
+            try {
+                Thread.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("AFTER THREADS OPERATION-------------------------\n" + contacts);
+    }
+
 }

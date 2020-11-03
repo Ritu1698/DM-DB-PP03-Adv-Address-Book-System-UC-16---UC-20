@@ -44,4 +44,10 @@ public class Contact {
                 Objects.equals(email, contact.email) &&
                 Objects.equals(registeredDate, contact.registeredDate);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(firstName, lastName, address, city, state, zip, phoneNumber, email, registeredDate);
+
+    }
 }
