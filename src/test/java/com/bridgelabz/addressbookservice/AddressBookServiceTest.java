@@ -4,7 +4,10 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import java.sql.SQLException;
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 public class AddressBookServiceTest {
@@ -52,13 +55,36 @@ public class AddressBookServiceTest {
     }
 
     @Test
-    public void givenNewEmployeeWhenAddedShouldSyncWithDB() throws SQLException {
+    public void givenNewEmployee_whenAdded_shouldSyncWithDB() throws SQLException {
         AddressBookService addressBookService = new AddressBookService();
         addressBookService.readContactData();
         addressBookService.addContactToAddressBook("Priyanka", "Kalena", "Orchid", "Mumbai", "Maharastra", "400096", "998855975", "pk@gmail.com", LocalDate.now());
         boolean result = addressBookService.checkIfDataBaseIsInSync("Priyanka");
         Assert.assertTrue(result);
 
+    }
+
+    @Test
+    public void givenMultipleEmployees_whenAdded_shouldSyncWithDB() throws SQLException {
+        Contact[] contactsArrayWithoutThreads = {
+                new Contact(0, "Prek", "Japtap", "Neelkant", "Mumbai", "Maharashtra", "400096", "669855975", "pj@gmail.com", LocalDate.now()),
+                new Contact(0, "Rini", "Kumar", "Raheja", "Mumbai", "Maharashtra", "400096", "9757654329", "rk@gmail.com", LocalDate.now()),
+
+        };
+        Contact[] contactsArrayWithThreads = {
+                new Contact(0, "Prince", "Jain", "xyz apartments", "Raipur", "Chhattisgarh", "493661", "9871116542", "pj@gmail.com", LocalDate.now()),
+                new Contact(0, "Neeraj", "Jain", "abc building", "Raipur", "Chhattisgarh", "493661", "1111222200", "nj@gmail.com", LocalDate.now())
+        };
+        AddressBookService addressBookService = new AddressBookService();
+        addressBookService.readContactData();
+        Instant start = Instant.now();
+        addressBookService.addMultiContactToAddressBook(Arrays.asList(contactsArrayWithoutThreads));
+        Instant end = Instant.now();
+        System.out.println("Duration Without Thread: " + Duration.between(start, end));
+        Instant threadStart = Instant.now();
+        addressBookService.addMultiContactToAddressBookWithThreads(Arrays.asList(contactsArrayWithThreads));
+        Instant threadEnd = Instant.now();
+        System.out.println("Duration With Thread: " + Duration.between(threadStart, threadEnd));
     }
 
 }
