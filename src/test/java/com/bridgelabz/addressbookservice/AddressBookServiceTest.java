@@ -65,7 +65,7 @@ public class AddressBookServiceTest {
     }
 
     @Test
-    public void givenMultipleEmployees_whenAdded_shouldSyncWithDB() throws SQLException {
+    public void givenMultipleEmployees_whenAdded_shouldSyncWithDB() throws SQLException, InterruptedException {
         Contact[] contactsArrayWithoutThreads = {
                 new Contact(0, "Prek", "Japtap", "Neelkant", "Mumbai", "Maharashtra", "400096", "669855975", "pj@gmail.com", LocalDate.now()),
                 new Contact(0, "Rini", "Kumar", "Raheja", "Mumbai", "Maharashtra", "400096", "9757654329", "rk@gmail.com", LocalDate.now()),
@@ -77,12 +77,9 @@ public class AddressBookServiceTest {
         };
         AddressBookService addressBookService = new AddressBookService();
         addressBookService.readContactData();
-        Instant start = Instant.now();
-        addressBookService.addMultiContactToAddressBook(Arrays.asList(contactsArrayWithoutThreads));
-        Instant end = Instant.now();
-        System.out.println("Duration Without Thread: " + Duration.between(start, end));
         Instant threadStart = Instant.now();
         addressBookService.addMultiContactToAddressBookWithThreads(Arrays.asList(contactsArrayWithThreads));
+        Thread.sleep(1600);
         Instant threadEnd = Instant.now();
         System.out.println("Duration With Thread: " + Duration.between(threadStart, threadEnd));
     }
