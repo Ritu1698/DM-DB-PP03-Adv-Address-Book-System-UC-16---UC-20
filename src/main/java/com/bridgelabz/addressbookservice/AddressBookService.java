@@ -86,13 +86,13 @@ public class AddressBookService {
             Thread thread = new Thread(task, contactData.firstName);
             thread.start();
         });
-        while (employeeAdditionStatus.containsValue(false)) {
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+//        while (employeeAdditionStatus.containsValue(false)) {
+//            try {
+//                Thread.sleep(10);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//        }
         System.out.println("AFTER THREADS OPERATION-------------------------\n" + contacts);
     }
 
