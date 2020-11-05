@@ -35,7 +35,7 @@ public class AddressBookServiceTest {
     public void givenNewAddress_whenUpdated_shouldSyncWithDB() throws SQLException {
         AddressBookService addressBookService = new AddressBookService();
         List<Contact> contacts = AddressBookService.readContactData();
-        addressBookService.updateContactsAddress("Ritu", "Anushaktinagar");
+        addressBookService.updateContactsAddress("Ritu", "Anushaktinagar",0);
         boolean result = addressBookService.checkIfDataBaseIsInSync("Ritu");
         Assert.assertTrue(result);
     }
@@ -109,7 +109,7 @@ public class AddressBookServiceTest {
         AddressBookService addressBookService;
         Contact[] arrayOfContacts = getContactList();
         addressBookService = new AddressBookService(Arrays.asList(arrayOfContacts));
-        Contact contact = new Contact(0, "Prek", "Japtap", "Neelkant", "Mumbai", "Maharashtra", "400096", "669855975", "pj@gmail.com", LocalDate.now());
+        Contact contact = new Contact(4, "Prek", "Japtap", "Neelkant", "Mumbai", "Maharashtra", "400096", "669855975", "pj@gmail.com", LocalDate.now());
         Response response = addContactDataToJsonServer(contact);
         int statusCode = response.getStatusCode();
         Assert.assertEquals(201, statusCode);
@@ -117,6 +117,25 @@ public class AddressBookServiceTest {
         addressBookService.addEmployeeDataForREST(contact);
         long entries = addressBookService.countEntries();
         Assert.assertEquals(4, entries);
+    }
+
+    @Test
+    public void givenNewAddressForContact_whenUpdatedToJsonServer_shouldMatch200Response() throws SQLException {
+        AddressBookService addressBookService;
+        Contact[] arrayOfContacts = getContactList();
+        addressBookService = new AddressBookService(Arrays.asList(arrayOfContacts));
+        addressBookService.updateContactsAddress("Dyo", "XYZ Society",1);
+        Contact contact = addressBookService.getContactData("Dyo");
+        System.out.println("UPDATED ADDRESS-----------------"+contact.address+contact.contactID);
+        String contactJson = new Gson().toJson(contact);
+        RequestSpecification requestSpecification = RestAssured.given();
+        requestSpecification.header("Content-Type", "application/json");
+        requestSpecification.body(contactJson);
+        Response response = requestSpecification.put("/contacts/" + contact.contactID);
+        int statusCode = response.getStatusCode();
+        Assert.assertEquals(200, statusCode);
+
+
     }
 
     private Response addContactDataToJsonServer(Contact contact) {
