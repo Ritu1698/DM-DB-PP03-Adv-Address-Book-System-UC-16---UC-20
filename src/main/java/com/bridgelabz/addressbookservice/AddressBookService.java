@@ -31,9 +31,11 @@ public class AddressBookService {
         return contacts;
     }
 
-    public void updateContactsAddress(String firstName, String address) {
-        int result = AddressBookDBService.updateContactData(firstName, address);
-        if (result == 0) return;
+    public void updateContactsAddress(String firstName, String address,int restFlag) {
+        if(restFlag == 0){
+            int result = AddressBookDBService.updateContactData(firstName, address);
+            if (result == 0) return;
+        }
         Contact contact = this.getContactData(firstName);
         if (contact != null) contact.address = address;
     }
