@@ -1,6 +1,10 @@
 package com.bridgelabz.addressbookservice;
 
+import com.google.gson.Gson;
+import io.restassured.RestAssured;
+import io.restassured.response.Response;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.sql.SQLException;
@@ -11,6 +15,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class AddressBookServiceTest {
+
+    @Before
+    public void setUP(){
+        RestAssured.baseURI = "http://localhost";
+        RestAssured.port = 3000;
+    }
+
     @Test
     public void givenContactData_whenRetrieved_shouldMatchSize() throws SQLException {
         AddressBookService addressBookService = new AddressBookService();
@@ -84,4 +95,17 @@ public class AddressBookServiceTest {
         System.out.println("Duration With Thread: " + Duration.between(threadStart, threadEnd));
     }
 
+    @Test
+    public void givenEmployeeDataInJsonServer_whenRetrieved_shouldMatchTheCount() {
+        Contact[] arrayOfEmployees = getContactList();
+        AddressBookService addressBookService = new AddressBookService(Arrays.asList(arrayOfEmployees));
+        long entries = addressBookService.countEntries();
+        Assert.assertEquals(3, entries);
+    }
+    private Contact[] getContactList() {
+        Response response = RestAssured.get("/contacts");
+        System.out.println("CONTACT ENTRIES IN JSON Server:\n" + response.asString());
+        Contact[] arrayOfContacts = new Gson().fromJson(response.asString(), Contact[].class);
+        return arrayOfContacts;
+    }
 }
