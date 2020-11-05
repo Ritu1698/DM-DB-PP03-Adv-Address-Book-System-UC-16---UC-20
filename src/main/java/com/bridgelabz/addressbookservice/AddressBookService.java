@@ -15,6 +15,10 @@ public class AddressBookService {
         addressBookDBService = AddressBookDBService.getInstance();
         contacts = new ArrayList<>();
     }
+    public AddressBookService(List<Contact>contactList) {
+        this();
+        contacts = new ArrayList<>(contactList);
+    }
 
     public static List<Contact> readContactData() throws SQLException {
         contacts = AddressBookDBService.readData();
@@ -86,14 +90,11 @@ public class AddressBookService {
             Thread thread = new Thread(task, contactData.firstName);
             thread.start();
         });
-//        while (employeeAdditionStatus.containsValue(false)) {
-//            try {
-//                Thread.sleep(10);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
         System.out.println("AFTER THREADS OPERATION-------------------------\n" + contacts);
+    }
+
+    public long countEntries() {
+        return contacts.size();
     }
 
 }
