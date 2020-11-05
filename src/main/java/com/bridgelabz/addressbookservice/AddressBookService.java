@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class AddressBookService {
     public static List<Contact> contacts;
@@ -95,9 +96,15 @@ public class AddressBookService {
         System.out.println("AFTER THREADS OPERATION-------------------------\n" + contacts);
     }
 
+    public int removeContactData(String firstName){
+        contacts = contacts.stream().filter(contact -> !contact.firstName.equals(firstName)).collect(Collectors.toList());
+        return contacts.size();
+    }
+
     public long countEntries() {
         return contacts.size();
     }
+
 
     public void addEmployeeDataForREST(Contact contact) {
         contacts.add(contact);
