@@ -138,6 +138,23 @@ public class AddressBookServiceTest {
 
     }
 
+    @Test
+    public void givenEmployeeToDelete_whenDeleted_shouldMatch200ResponseAndCount(){
+        AddressBookService addressBookService;
+        Contact[] arrayOfEmployees = getContactList();
+        addressBookService = new AddressBookService(Arrays.asList(arrayOfEmployees));
+        Contact contact = addressBookService.getContactData("Prek");
+        RequestSpecification requestSpecification = RestAssured.given();
+        requestSpecification.header("Content-Type", "application/json");
+        System.out.println("UPDATED ADDRESS-----------------"+contact.address+contact.contactID);
+        Response response = requestSpecification.delete("/contacts/" + contact.contactID);
+        int statusCode = response.getStatusCode();
+        Assert.assertEquals(200, statusCode);
+        addressBookService.removeContactData(contact.firstName);
+        long entries = addressBookService.countEntries();
+        Assert.assertEquals(3,entries);
+    }
+
     private Response addContactDataToJsonServer(Contact contact) {
         String contactJson = new Gson().toJson(contact);
         RequestSpecification requestSpecification = RestAssured.given();
