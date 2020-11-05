@@ -97,4 +97,7 @@ public class AddressBookService {
         return contacts.size();
     }
 
+    public void addEmployeeDataForREST(Contact contact) {
+        contacts.add(contact);
+    }
 }
