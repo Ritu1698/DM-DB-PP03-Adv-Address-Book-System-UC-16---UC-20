@@ -9,9 +9,11 @@ public class AddressBookDBService {
     private static AddressBookDBService addressBookDBService;
     private static PreparedStatement contactStatement;
 
+    //Constructor
     private AddressBookDBService() {
     }
 
+    //Method To Create Singleton Object
     public static AddressBookDBService getInstance() {
         if (addressBookDBService == null)
             addressBookDBService = new AddressBookDBService();
@@ -19,13 +21,35 @@ public class AddressBookDBService {
 
     }
 
-    public static List<Contact> readData() {
+    //Method To Read All Data From DB
+    public List<Contact> readDataFromDB() {
         String sql = "select * from contact;";
-        return getContactList(sql);
+        return getContactsUsingStatementFromDB(sql);
 
     }
 
-    public static List<Contact> getContactList(String sql) {
+    //Method To Read Date Ranged Data From DB
+    public List<Contact> readDataGivenDateRangeFromDB(LocalDate startDate, LocalDate endDate) {
+        String sql = String.format("select * from contact where registered_date between '%s' and '%s';", Date.valueOf(startDate), Date.valueOf(endDate));
+        return getContactsUsingStatementFromDB(sql);
+    }
+
+    //Method To Read City Data From DB
+    public List<Contact> readContactsByCity(String city) {
+        String sql = String.format("select * from contact where city='%s'", city);
+        return getContactsUsingStatementFromDB(sql);
+
+    }
+
+    //Method To Read State Data From DB
+    public List<Contact> readContactsByState(String state) {
+        String sql = String.format("select * from contact where state='%s'", state);
+        return getContactsUsingStatementFromDB(sql);
+
+    }
+
+    //Method To Get Contacts As List Using Statement
+    public List<Contact> getContactsUsingStatementFromDB(String sql) {
         List<Contact> employeePayrollDataList = new ArrayList<>();
         try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
@@ -38,7 +62,8 @@ public class AddressBookDBService {
         return employeePayrollDataList;
     }
 
-    private static List<Contact> getContact(ResultSet resultSet) {
+    //Method To Get Contact And Add To List
+    private List<Contact> getContact(ResultSet resultSet) {
         List<Contact> contactDataList = new ArrayList<>();
         try {
             while (resultSet.next()) {
@@ -61,17 +86,8 @@ public class AddressBookDBService {
         return contactDataList;
     }
 
-    private static Connection getConnection() throws SQLException {
-        String jdbcURL = "jdbc:mysql://localhost:3306/address_book_service?userSSL=false";
-        String userName = "root";
-        String password = "root";
-        Connection connection;
-        connection = DriverManager.getConnection(jdbcURL, userName, password);
-        System.out.println("Connection Successful!!!!" + connection);
-        return connection;
-    }
-
-    public static int updateContactData(String firstName, String address) {
+    //Method to Update Data To DB
+    public int updateContactDataToDB(String firstName, String address) {
         String sql = String.format("update contact set address='%s' where first_name='%s';", address, firstName);
         try (Connection connection = getConnection()) {
             Statement statement = connection.createStatement();
@@ -82,52 +98,8 @@ public class AddressBookDBService {
         return 0;
     }
 
-    public static List<Contact> getContactFromDB(String name) throws SQLException {
-        List<Contact> contactList = null;
-        if (contactStatement == null)
-            prepareStatementForEmployeeData();
-        try {
-            contactStatement.setString(1, name);
-            ResultSet resultSet = contactStatement.executeQuery();
-            contactList = getContact(resultSet);
-            getConnection().close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return contactList;
-
-
-    }
-
-    private static void prepareStatementForEmployeeData() throws SQLException {
-        try {
-            Connection connection = getConnection();
-            String sql = "SELECT * FROM contact where first_name= ?";
-            contactStatement = connection.prepareStatement(sql);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public static List<Contact> readDataGivenDateRange(LocalDate startDate, LocalDate endDate) {
-        String sql = String.format("select * from contact where registered_date between '%s' and '%s';", Date.valueOf(startDate), Date.valueOf(endDate));
-        return getContactList(sql);
-    }
-
-    public static List<Contact> readContactsByCity(String city) {
-        String sql = String.format("select * from contact where city='%s'", city);
-        return getContactList(sql);
-
-    }
-
-    public static List<Contact> readContactsByState(String city) {
-        String sql = String.format("select * from contact where state='%s'", city);
-        return getContactList(sql);
-
-    }
-
-    public static Contact addContactToDB(String firstName, String lastName, String address, String city, String state, String zip, String number, String email, LocalDate registeredDate) {
+    //Method To Insert Data To DB
+    public Contact addContactToDB(String firstName, String lastName, String address, String city, String state, String zip, String number, String email, LocalDate registeredDate) {
 
         int contact_id = -1;
         Connection connection = null;
@@ -154,5 +126,46 @@ public class AddressBookDBService {
             e.printStackTrace();
         }
         return contact;
+    }
+
+    //Method To Form Connection To DB
+    private Connection getConnection() throws SQLException {
+        String jdbcURL = "jdbc:mysql://localhost:3306/address_book_service?userSSL=false";
+        String userName = "root";
+        String password = "root";
+        Connection connection;
+        connection = DriverManager.getConnection(jdbcURL, userName, password);
+        System.out.println("Connection Successful!!!!" + connection);
+        return connection;
+    }
+
+    //Get Contacts Using Prepared Statement From List
+    public List<Contact> getContactUsingPreparedStatementFromDB(String name) throws SQLException {
+        List<Contact> contactList = null;
+        if (contactStatement == null)
+            prepareStatementForEmployeeData();
+        try {
+            contactStatement.setString(1, name);
+            ResultSet resultSet = contactStatement.executeQuery();
+            contactList = getContact(resultSet);
+            getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return contactList;
+
+
+    }
+
+    //Method To Execute Prepared Statement
+    private void prepareStatementForEmployeeData() throws SQLException {
+        try {
+            Connection connection = getConnection();
+            String sql = "SELECT * FROM contact where first_name= ?";
+            contactStatement = connection.prepareStatement(sql);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
     }
 }
